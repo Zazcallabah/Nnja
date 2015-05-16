@@ -5,7 +5,8 @@ using System.Net;
 using System.Net.Sockets;
 
 public class UdpRecv : MonoBehaviour {
-	
+	int port = 10001;// 10001 is the port, obv. remember to open the firewall!
+
 	// these fields become accesable to other scripts
 	public float latestX =0;
 	public float latestY=0;
@@ -23,8 +24,8 @@ public class UdpRecv : MonoBehaviour {
 	
 	// listen for udp packets in a separate thread.
 	void Loop(){
-		listener = new UdpClient(10001); // 10001 is the port, obv. remember to open the firewall!
-		IPEndPoint groupEP = new IPEndPoint(IPAddress.Any,10001);
+		listener = new UdpClient(port);
+		IPEndPoint groupEP = new IPEndPoint(IPAddress.Any,port);
 		try 
 		{
 			while (true) 
@@ -51,10 +52,10 @@ public class UdpRecv : MonoBehaviour {
 							var resA = float.TryParse(dataset[3],out fs[3]);
 							if( resX && resY && resD && resA )
 							{
-								latestX = fs[0];
-								latestY = fs[1];
+								latestX = Transposer.X(fs[0]);
+								latestY = Transposer.Y (fs[1]);
 								latestLength = fs[2];
-								latestAngle = fs[3];
+								latestAngle = Transposer.Angl(fs[3]);
 							}
 							float latestId;
 							var resID = float.TryParse(dataset[4],out latestId);
@@ -82,4 +83,29 @@ public class UdpRecv : MonoBehaviour {
 		if ( UdpThread!= null) 
 			UdpThread.Abort(); 
 	} 
+}
+public class Transposer
+{
+	static float CameraXRes = 640;
+	static float CameraYRes = 480;
+	
+	public static float X( float invalue )
+	{
+		if (invalue <= 0)
+			return 0;
+		return  Screen.width * (CameraXRes / invalue);
+	}
+	
+	public static float Y( float invalue )
+	{
+		var adjusted = 480 - invalue;
+		if (adjusted <= 0)
+			return 0;
+		return  Screen.height*( CameraYRes / adjusted);
+	}
+	
+	public static float Angl( float invalue )
+	{
+		return invalue * -1;
+	}
 }
