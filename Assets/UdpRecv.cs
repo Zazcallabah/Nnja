@@ -52,8 +52,9 @@ public class UdpRecv : MonoBehaviour {
 							var resA = float.TryParse(dataset[3],out fs[3]);
 							if( resX && resY && resD && resA )
 							{
-								latestX = Transposer.X(fs[0]);
-								latestY = Transposer.Y (fs[1]);
+								var t = new Transposer(640,480,Screen.width,Screen.height);
+								latestX = t.X(fs[0]);
+								latestY = t.Y (fs[1]);
 								latestLength = fs[2];
 								latestAngle = Transposer.Angl(fs[3]);
 							}
@@ -84,28 +85,33 @@ public class UdpRecv : MonoBehaviour {
 			UdpThread.Abort(); 
 	} 
 }
+
 public class Transposer
 {
-	static float CameraXRes = 640;
-	static float CameraYRes = 480;
-	
-	public static float X( float invalue )
+	public Transposer( float cx, float cy, float screenx, float screeny )
 	{
-		if (invalue <= 0)
-			return 0;
-		return  Screen.width * (CameraXRes / invalue);
+		CameraXRes = cx;
+		CameraYRes = cy;
+		ScreenXRes = screenx;
+		ScreenYRes = screeny;
+	}
+	float CameraXRes;
+	float CameraYRes;
+	float ScreenXRes;
+	float ScreenYRes;
+
+	public float X( float invalue )
+	{
+		return  ScreenXRes * (invalue/CameraXRes);
 	}
 	
-	public static float Y( float invalue )
+	public float Y( float invalue )
 	{
-		var adjusted = 480 - invalue;
-		if (adjusted <= 0)
-			return 0;
-		return  Screen.height*( CameraYRes / adjusted);
+		return (-ScreenYRes /CameraYRes) * invalue + ScreenYRes;
 	}
 	
 	public static float Angl( float invalue )
 	{
-		return invalue * -1;
+		return invalue * -1f;
 	}
 }

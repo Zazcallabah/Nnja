@@ -9,6 +9,6 @@ public class Control : MonoBehaviour {
 		var udp = GetComponent<UdpRecv> ();
 		var res = Camera.main.ScreenToWorldPoint(new Vector3(udp.latestX, udp.latestY, 40));
 		transform.position = res;
-		transform.localEulerAngles = new Vector3((udp.latestAngle)+450,90,270);
+		transform.localEulerAngles = new Vector3(0,0,(udp.latestAngle));
 	}
 }
