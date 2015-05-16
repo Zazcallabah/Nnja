@@ -6,7 +6,7 @@ public class Control : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		var udp = GetComponent<UDPLISTEN> (); // get a reference to the other script
+		var udp = GetComponent<UdpRecv> (); // get a reference to the other script
 		var laserX = udp.latestX;
 		var laserY = udp.latestY;
 		

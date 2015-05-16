@@ -4,7 +4,7 @@ using System.Threading;
 using System.Net;
 using System.Net.Sockets;
 
-public class UDPLISTEN : MonoBehaviour {
+public class UdpRecv : MonoBehaviour {
 	
 	// these fields become accesable to other scripts
 	public float latestX =0;
@@ -12,13 +12,13 @@ public class UDPLISTEN : MonoBehaviour {
 	public float latestAngle=0;
 	public float latestLength=0;
 	
-	Thread UdpRecv;
+	Thread UdpThread;
 	UdpClient listener;
 	// Use this for initialization
 	void Start () {
-		UdpRecv = new Thread(new ThreadStart(Loop));
-		UdpRecv.IsBackground = true;
-		UdpRecv.Start ();
+		UdpThread = new Thread(new ThreadStart(Loop));
+		UdpThread.IsBackground = true;
+		UdpThread.Start ();
 	}
 	
 	// listen for udp packets in a separate thread.
@@ -79,7 +79,7 @@ public class UDPLISTEN : MonoBehaviour {
 	
 	void OnDisable() 
 	{ 
-		if ( UdpRecv!= null) 
-			UdpRecv.Abort(); 
+		if ( UdpThread!= null) 
+			UdpThread.Abort(); 
 	} 
 }
